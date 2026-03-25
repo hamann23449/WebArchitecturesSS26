@@ -46,4 +46,5 @@ app.delete('/api/albums/:id', (req, res) => {
 });
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Album backend listening on port ${port}`));
+// bind to all interfaces to avoid IPv6/IPv4 resolution issues on some systems
+app.listen(port, '0.0.0.0', () => console.log(`Album backend listening on port ${port}`));
