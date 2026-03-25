@@ -2,6 +2,8 @@
 
 This repo contains a minimal fullstack scaffold: an Express backend (port 3000) and a Vite + React frontend (port 5173). It lets you add albums, mark them listened/unlistened, and rate them.
 
+Prompt: "Stack: React + Vite (frontend, port 5173), Express (backend, port 3000). As a music lover, I want to build a web-based platform that allows me to rate albums I’ve already listened to—for myself or for friends—and to keep track of the albums I’ve listened to."
+
 Run locally (Windows PowerShell):
 
 ```powershell
