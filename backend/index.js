@@ -16,6 +16,14 @@ app.get('/api/albums', (req, res) => {
   res.json(albums);
 });
 
+// return a single album by id
+app.get('/api/albums/:id', (req, res) => {
+  const id = Number(req.params.id);
+  const album = albums.find(a => a.id === id);
+  if (!album) return res.status(404).json({ error: 'not found' });
+  res.json(album);
+});
+
 app.post('/api/albums', (req, res) => {
   const { artist, title, year } = req.body;
   if (!artist || !title) return res.status(400).json({ error: 'artist and title required' });
