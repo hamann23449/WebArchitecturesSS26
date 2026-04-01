@@ -39,3 +39,10 @@ In meinem Anwendungsfall würde ich eher mit Vite arbeiten, da alles hinter eine
 Aber ich würde zunächst das Frontend auf Next.js aufbauen und umsetzen. Im Nachhinein entscheide ich, welche der beiden Architekturen besser für mein Projekt geeignet ist. 
 
 Notes: This is a demo using an in-memory store. For persistence, connect a database (SQLite/Postgres/Mongo) and move data access into a separate module.
+
+
+////Ressourcen die meine App hat/////
+
+Typische Ressourcen die ich benötige sind: verschiedene Users (Nutzerkonten); Tasks (z.B Alben bewerten, Alben zur Bibliothek hinzufügen); Projects und Comments.
+
+Für die Struktur würde ich eher das Pragmatisches Nesting für mein Projekt verwenden, da ich gerne die AlbenCover, AlbumTitel, KünstlerName, MusikGenre, AlbumSongsListe mir aus einer API holen möchte und ich bei der Komplexität lieber mit Ordnern/Ebenen arbeiten.
