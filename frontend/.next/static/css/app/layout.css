@@ -532,6 +532,7 @@ video {
 .grid {
   display: grid;
 }
+<<<<<<< HEAD
 .h-14 {
   height: 3.5rem;
 }
@@ -541,6 +542,29 @@ video {
 .w-14 {
   width: 3.5rem;
 }
+=======
+.h-10 {
+  height: 2.5rem;
+}
+.h-14 {
+  height: 3.5rem;
+}
+.h-36 {
+  height: 9rem;
+}
+.h-5 {
+  height: 1.25rem;
+}
+.w-10 {
+  width: 2.5rem;
+}
+.w-14 {
+  width: 3.5rem;
+}
+.w-36 {
+  width: 9rem;
+}
+>>>>>>> af3a6ee08607dc7a02a942be637f523f62d4cd99
 .w-5 {
   width: 1.25rem;
 }
@@ -569,6 +593,14 @@ video {
   margin-right: calc(1rem * var(--tw-space-x-reverse));
   margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
 }
+<<<<<<< HEAD
+=======
+.space-x-6 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 0;
+  margin-right: calc(1.5rem * var(--tw-space-x-reverse));
+  margin-left: calc(1.5rem * calc(1 - var(--tw-space-x-reverse)));
+}
+>>>>>>> af3a6ee08607dc7a02a942be637f523f62d4cd99
 .space-y-2 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
@@ -579,9 +611,12 @@ video {
   margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(1rem * var(--tw-space-y-reverse));
 }
+<<<<<<< HEAD
 .overflow-hidden {
   overflow: hidden;
 }
+=======
+>>>>>>> af3a6ee08607dc7a02a942be637f523f62d4cd99
 .rounded {
   border-radius: 0.25rem;
 }
@@ -593,9 +628,12 @@ video {
   -o-object-fit: cover;
      object-fit: cover;
 }
+<<<<<<< HEAD
 .p-0 {
   padding: 0px;
 }
+=======
+>>>>>>> af3a6ee08607dc7a02a942be637f523f62d4cd99
 .p-1 {
   padding: 0.25rem;
 }
@@ -632,6 +670,12 @@ video {
   font-size: 0.75rem;
   line-height: 1rem;
 }
+<<<<<<< HEAD
+=======
+.font-bold {
+  font-weight: 700;
+}
+>>>>>>> af3a6ee08607dc7a02a942be637f523f62d4cd99
 .font-medium {
   font-weight: 500;
 }
@@ -688,6 +732,7 @@ body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 
 .brand { color: var(--primary); }
 .accent { color: var(--accent); }
 .rounded-lg-clip { border-radius: 12px; overflow: hidden; }
+<<<<<<< HEAD
 
 /* Header logo styling for a cleaner, professional look */
 .header-logo {
@@ -714,6 +759,8 @@ body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', 
 }
 .hero-overlay .title { font-size: 1.5rem; font-weight: 700; color: var(--text); }
 .hero-overlay .subtitle { color: var(--muted); }
+=======
+>>>>>>> af3a6ee08607dc7a02a942be637f523f62d4cd99
 .hover\:text-yellow-400:hover {
   --tw-text-opacity: 1;
   color: rgb(250 204 21 / var(--tw-text-opacity));
