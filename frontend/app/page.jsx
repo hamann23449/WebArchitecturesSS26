@@ -13,12 +13,13 @@ export default async function Page() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       <section className="md:col-span-2">
-        <div className="rounded-lg-clip card-surface p-6 mb-6">
-          <div className="flex items-center space-x-6">
-            <img src="/assets/hero.jpg" alt="Hero" className="w-36 h-36 rounded-lg-clip object-cover" />
-            <div>
-              <h1 className="text-2xl font-bold">Albums I’ve listened to</h1>
-              <p className="muted text-sm">Server-rendered list fetched directly from the Express backend.</p>
+        <div className="rounded-lg-clip card-surface p-0 mb-6 overflow-hidden">
+          <div className="hero-banner" style={{ backgroundImage: `url('/assets/image/hero.jpg')` }}>
+            <div className="hero-overlay p-6 flex items-center">
+              <div>
+                <h1 className="title">Albums I’ve listened to</h1>
+                <p className="subtitle">Server-rendered list fetched directly from the Express backend.</p>
+              </div>
             </div>
           </div>
         </div>

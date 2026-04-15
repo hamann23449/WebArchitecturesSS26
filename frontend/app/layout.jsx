@@ -10,7 +10,7 @@ export default function RootLayout({ children }) {
       <body className="app-bg">
         <header className="max-w-6xl mx-auto p-6 flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <img src="/assets/logo.png" alt="Logo" className="w-10 h-10 rounded-lg-clip" />
+            <img src="/assets/image/logo.png" alt="Logo" className="header-logo" />
             <div>
               <div className="text-lg font-semibold brand">Album Ratings</div>
               <div className="text-xs muted">Your personal music library</div>

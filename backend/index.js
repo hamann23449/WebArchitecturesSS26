@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 const app = express();
 app.use(cors());
@@ -43,6 +45,17 @@ app.delete('/api/albums/:id', (req, res) => {
   albums = albums.filter(a => a.id !== id);
   if (albums.length === before) return res.status(404).json({ error: 'not found' });
   res.status(204).end();
+});
+
+// GET /api/tasks - load tasks from database using Prisma
+app.get('/api/tasks', async (req, res) => {
+  try {
+    const tasks = await prisma.task.findMany();
+    res.json(tasks);
+  } catch (err) {
+    console.error('GET /api/tasks error', err);
+    res.status(500).json({ error: 'internal server error' });
+  }
 });
 
 const port = process.env.PORT || 3000;
