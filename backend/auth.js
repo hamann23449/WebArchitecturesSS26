@@ -58,4 +58,9 @@ router.post('/login', async (req, res) => {
   }
 });
 
+router.post('/logout', (req, res) => {
+  res.cookie('token', '', { httpOnly: true, maxAge: 0, path: '/' });
+  res.json({ ok: true });
+});
+
 module.exports = router;

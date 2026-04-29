@@ -32,11 +32,13 @@ app.get('/api/albums', async (req, res) => {
 });
 
 // return a single album by id
-app.get('/api/albums/:id', async (req, res) => {
+app.get('/api/albums/:id', authenticate, async (req, res) => {
   const id = Number(req.params.id);
   try {
     const album = await prisma.album.findUnique({ where: { id } });
     if (!album) return res.status(404).json({ error: 'not found' });
+    // only owner may view this album in this design
+    if (album.userId !== req.user.userId) return res.status(404).json({ error: 'not found' });
     res.json(album);
   } catch (err) {
     console.error('get album error', err);
