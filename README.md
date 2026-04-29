@@ -40,6 +40,78 @@ Aber ich würde zunächst das Frontend auf Next.js aufbauen und umsetzen. Im Nac
 
 Notes: This is a demo using an in-memory store. For persistence, connect a database (SQLite/Postgres/Mongo) and move data access into a separate module.
 
+/////Datenschema fürs Projekt Album Ratings beschreiben///////
+users      tasks              projects
+--------   ----------------   --------
+id         id                 id
+email      title              name
+name       done (bool)        userId (FK → users)
+(password) userID 
+Saved Albums setRating
+Rating       getRating
+             getAlbumName
+             getAlbumArtist
+             getAlbumGenre
+             getAlbumSongList
+
+/////Ergänzung Mock Daten Handler////
+Checkliste: 
+
+Y Locate backend route file(s) to modify (index.js).
+Y Import Prisma client and initialize it.
+Y Replace/add GET /api/tasks route so it uses prisma.task.findMany() and wraps DB access in    try/catch.
+Y Return 500 + JSON error on failure, and log the error locally.
+N Validate server start: attempted to run backend to check for syntax/runtime errors (blocked by port in use).
+
+What I changed
+
+Edited index.js:
+Added:
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+Added GET /api/tasks route:
+Async handler that calls await prisma.task.findMany()
+try/catch around DB access
+On success: res.json(tasks)
+On error: log to console and res.status(500).json({ error: 'internal server error' })
+
+
+/////Datenschema fürs Projekt Album Ratings beschreiben///////
+users      tasks              projects
+--------   ----------------   --------
+id         id                 id
+email      title              name
+name       done (bool)        userId (FK → users)
+(password) userID 
+Saved Albums setRating
+Rating       getRating
+             getAlbumName
+             getAlbumArtist
+             getAlbumGenre
+             getAlbumSongList
+
+/////Ergänzung Mock Daten Handler////
+Checkliste: 
+
+Y Locate backend route file(s) to modify (index.js).
+Y Import Prisma client and initialize it.
+Y Replace/add GET /api/tasks route so it uses prisma.task.findMany() and wraps DB access in    try/catch.
+Y Return 500 + JSON error on failure, and log the error locally.
+N Validate server start: attempted to run backend to check for syntax/runtime errors (blocked by port in use).
+
+What I changed
+
+Edited index.js:
+Added:
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+Added GET /api/tasks route:
+Async handler that calls await prisma.task.findMany()
+try/catch around DB access
+On success: res.json(tasks)
+On error: log to console and res.status(500).json({ error: 'internal server error' })
+
+
 
 ////Ressourcen die meine App hat/////
 

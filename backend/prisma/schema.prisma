@@ -4,36 +4,54 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
+  url      = "file:./dev.db"
 }
 
+// Prisma schema for Album Ratings app
+// Models: User, Artist, Genre (optional), Album, Rating
+
 model User {
-  id        Int     @id @default(autoincrement())
-  email     String  @unique
-  password  String
-  createdAt DateTime @default(now())
-  albums    Album[]
-  ratings   Rating[]
+  id            Int      @id @default(autoincrement())
+  name          String
+  email         String   @unique
+  password_hash String
+  ratings       Rating[]
+}
+
+model Artist {
+  id     Int     @id @default(autoincrement())
+  name   String
+  albums Album[]
+}
+
+model Genre {
+  id     Int     @id @default(autoincrement())
+  name   String
+  albums Album[]
 }
 
 model Album {
-  id        Int     @id @default(autoincrement())
-  artist    String
-  title     String
-  year      Int?
-  listened  Boolean @default(false)
-  rating    Int?
-  userId    Int
-  user      User    @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
+  id           Int      @id @default(autoincrement())
+  title        String
+  artist       Artist   @relation(fields: [artistId], references: [id])
+  artistId     Int
+  genre        Genre?   @relation(fields: [genreId], references: [id])
+  genreId      Int?
+  release_year Int?
+  ratings      Rating[]
 }
 
 model Rating {
-  id        Int     @id @default(autoincrement())
-  albumId   Int
-  score     Int
-  comment   String?
-  userId    Int
-  user      User    @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
+  id          Int      @id @default(autoincrement())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int
+  album       Album    @relation(fields: [albumId], references: [id])
+  albumId     Int
+  rating      Int
+  review_text String?
+  created_at  DateTime @default(now())
+
+  @@index([userId])
+  @@index([albumId])
+
 }
