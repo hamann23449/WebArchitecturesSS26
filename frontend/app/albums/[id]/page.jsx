@@ -10,16 +10,22 @@ export default function AlbumPage({ params }) {
 
   useEffect(() => {
     let mounted = true
-    fetch(`http://127.0.0.1:3000/api/albums/${id}`)
-      .then(r => r.json())
-      .then(data => { if (mounted) setAlbum(data) })
+    let cancelled = false
+    async function load() {
+      const { authFetch } = await import('../../../src/lib/authFetch');
+      const res = await authFetch(`/api/albums/${id}`)
+      const data = await res.json()
+      if (!cancelled && mounted) setAlbum(data)
+    }
+    load().catch(() => {})
     return () => { mounted = false }
   }, [id])
 
   if (!album) return <div>Loading...</div>
 
   async function saveRating(newRating) {
-  const res = await fetch(`http://127.0.0.1:3000/api/albums/${id}`, {
+  const { authFetch } = await import('../../../src/lib/authFetch');
+  const res = await authFetch(`/api/albums/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ rating: newRating, listened: true })

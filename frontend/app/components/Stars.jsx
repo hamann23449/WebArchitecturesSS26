@@ -11,11 +11,12 @@ export default function Stars({ albumId, initialRating }) {
     setRating(newRating)
     setSaving(true)
     try {
-      const res = await fetch(`http://127.0.0.1:3000/api/albums/${albumId}`, {
+      const { authFetch } = await import('../../src/lib/authFetch');
+      const res = await authFetch(`/api/albums/${albumId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rating: newRating, listened: true })
-      })
+      });
       if (!res.ok) throw new Error('save failed')
       await res.json()
     } catch (err) {

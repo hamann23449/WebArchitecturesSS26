@@ -1,9 +1,16 @@
 const express = require('express');
 const cors = require('cors');
+const dotenv = require('dotenv');
+const cookieParser = require('cookie-parser');
+
+dotenv.config();
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: process.env.FRONTEND_ORIGIN || true, credentials: true }));
 app.use(express.json());
+app.use(cookieParser());
+// authentication middleware (JWT)
+const authenticate = require('./middleware/authenticate');
 
 // Simple request logger to help diagnose routing/connection issues
 app.use((req, res, next) => {
@@ -11,52 +18,71 @@ app.use((req, res, next) => {
   next();
 });
 
-// In-memory store for demo purposes
-let albums = [
-  { id: 1, artist: 'Radiohead', title: 'OK Computer', year: 1997, listened: true, rating: 5 },
-  { id: 2, artist: 'The Beatles', title: 'Abbey Road', year: 1969, listened: false, rating: null }
-];
-let nextId = 3;
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
-app.get('/api/albums', (req, res) => {
-  res.json(albums);
+app.get('/api/albums', async (req, res) => {
+  try {
+    const all = await prisma.album.findMany();
+    res.json(all);
+  } catch (err) {
+    console.error('fetch albums error', err);
+    res.status(500).json({ error: 'internal error' });
+  }
 });
 
 // return a single album by id
-app.get('/api/albums/:id', (req, res) => {
+app.get('/api/albums/:id', async (req, res) => {
   const id = Number(req.params.id);
-  const album = albums.find(a => a.id === id);
-  if (!album) return res.status(404).json({ error: 'not found' });
-  res.json(album);
+  try {
+    const album = await prisma.album.findUnique({ where: { id } });
+    if (!album) return res.status(404).json({ error: 'not found' });
+    res.json(album);
+  } catch (err) {
+    console.error('get album error', err);
+    res.status(500).json({ error: 'internal error' });
+  }
 });
 
-app.post('/api/albums', (req, res) => {
+app.post('/api/albums', authenticate, async (req, res) => {
   const { artist, title, year } = req.body;
   if (!artist || !title) return res.status(400).json({ error: 'artist and title required' });
-  const album = { id: nextId++, artist, title, year: year || null, listened: false, rating: null };
-  albums.push(album);
-  res.status(201).json(album);
+  try {
+    const created = await prisma.album.create({ data: { artist, title, year: year ?? null, listened: false, rating: null, userId: req.user.userId } });
+    res.status(201).json(created);
+  } catch (err) {
+    console.error('create album error', err);
+    res.status(500).json({ error: 'internal error' });
+  }
 });
 
-app.put('/api/albums/:id', (req, res) => {
+app.put('/api/albums/:id', authenticate, async (req, res) => {
   const id = Number(req.params.id);
-  const album = albums.find(a => a.id === id);
-  if (!album) return res.status(404).json({ error: 'not found' });
-  const { artist, title, year, listened, rating } = req.body;
-  if (artist !== undefined) album.artist = artist;
-  if (title !== undefined) album.title = title;
-  if (year !== undefined) album.year = year;
-  if (listened !== undefined) album.listened = listened;
-  if (rating !== undefined) album.rating = rating;
-  res.json(album);
+  try {
+    const existing = await prisma.album.findUnique({ where: { id } });
+    if (!existing) return res.status(404).json({ error: 'not found' });
+    if (existing.userId !== req.user.userId) return res.status(403).json({ error: 'forbidden' });
+    const { artist, title, year, listened, rating } = req.body;
+    const updated = await prisma.album.update({ where: { id }, data: { artist: artist ?? existing.artist, title: title ?? existing.title, year: year ?? existing.year, listened: listened ?? existing.listened, rating: rating ?? existing.rating } });
+    res.json(updated);
+  } catch (err) {
+    console.error('update album error', err);
+    res.status(500).json({ error: 'internal error' });
+  }
 });
 
-app.delete('/api/albums/:id', (req, res) => {
+app.delete('/api/albums/:id', authenticate, async (req, res) => {
   const id = Number(req.params.id);
-  const before = albums.length;
-  albums = albums.filter(a => a.id !== id);
-  if (albums.length === before) return res.status(404).json({ error: 'not found' });
-  res.status(204).end();
+  try {
+    const existing = await prisma.album.findUnique({ where: { id } });
+    if (!existing) return res.status(404).json({ error: 'not found' });
+    if (existing.userId !== req.user.userId) return res.status(403).json({ error: 'forbidden' });
+    await prisma.album.delete({ where: { id } });
+    res.status(204).end();
+  } catch (err) {
+    console.error('delete album error', err);
+    res.status(500).json({ error: 'internal error' });
+  }
 });
 
 // --- Configuration: use port 3001 for this tasks/albums API ---
@@ -124,11 +150,6 @@ app.delete('/api/albums/:id', (req, res) => {
 });
 
 // -------------------- Ratings resource (in-memory) --------------------
-let ratings = [
-  // example: { id: 1, albumId: 1, score: 5, comment: 'Great' }
-];
-let nextRatingId = 1;
-
 function validateRatingPayload(payload) {
   if (!payload) return { valid: false, message: 'missing body' };
   const { albumId, score } = payload;
@@ -137,55 +158,85 @@ function validateRatingPayload(payload) {
 }
 
 // GET /api/ratings - list all ratings
-app.get('/api/ratings', (req, res) => {
-  res.json(ratings);
+app.get('/api/ratings', async (req, res) => {
+  try {
+    const all = await prisma.rating.findMany();
+    res.json(all);
+  } catch (err) {
+    console.error('fetch ratings error', err);
+    res.status(500).json({ error: 'internal error' });
+  }
 });
 
 // GET /api/ratings/:id - single rating
-app.get('/api/ratings/:id', (req, res) => {
+app.get('/api/ratings/:id', async (req, res) => {
   const id = Number(req.params.id);
-  const rating = ratings.find(r => r.id === id);
-  if (!rating) return res.status(404).json({ error: 'not found' });
-  res.json(rating);
+  try {
+    const rating = await prisma.rating.findUnique({ where: { id } });
+    if (!rating) return res.status(404).json({ error: 'not found' });
+    res.json(rating);
+  } catch (err) {
+    console.error('get rating error', err);
+    res.status(500).json({ error: 'internal error' });
+  }
 });
 
 // POST /api/ratings - create new rating
-app.post('/api/ratings', (req, res) => {
+app.post('/api/ratings', authenticate, async (req, res) => {
   const validation = validateRatingPayload(req.body);
   if (!validation.valid) return res.status(400).json({ error: validation.message });
   const { albumId, score, comment } = req.body;
-  // check album exists
-  const album = albums.find(a => a.id === Number(albumId));
-  if (!album) return res.status(404).json({ error: 'albumId not found' });
-  const rating = { id: nextRatingId++, albumId: Number(albumId), score: Number(score), comment: comment ?? null };
-  ratings.push(rating);
-  res.status(201).json(rating);
+  try {
+    const album = await prisma.album.findUnique({ where: { id: Number(albumId) } });
+    if (!album) return res.status(404).json({ error: 'albumId not found' });
+    // allow only if album belongs to user (or alternatively allow anyone) - we'll require same user for now
+    if (album.userId !== req.user.userId) return res.status(403).json({ error: 'forbidden' });
+    const created = await prisma.rating.create({ data: { albumId: Number(albumId), score: Number(score), comment: comment ?? null, userId: req.user.userId } });
+    res.status(201).json(created);
+  } catch (err) {
+    console.error('create rating error', err);
+    res.status(500).json({ error: 'internal error' });
+  }
 });
 
 // PUT /api/ratings/:id - replace rating
-app.put('/api/ratings/:id', (req, res) => {
+app.put('/api/ratings/:id', authenticate, async (req, res) => {
   const id = Number(req.params.id);
-  const idx = ratings.findIndex(r => r.id === id);
-  if (idx === -1) return res.status(404).json({ error: 'not found' });
   const validation = validateRatingPayload(req.body);
   if (!validation.valid) return res.status(400).json({ error: validation.message });
-  const { albumId, score, comment } = req.body;
-  // ensure album exists
-  const album = albums.find(a => a.id === Number(albumId));
-  if (!album) return res.status(404).json({ error: 'albumId not found' });
-  const replaced = { id, albumId: Number(albumId), score: Number(score), comment: comment ?? null };
-  ratings[idx] = replaced;
-  res.json(replaced);
+  try {
+    const existing = await prisma.rating.findUnique({ where: { id } });
+    if (!existing) return res.status(404).json({ error: 'not found' });
+    if (existing.userId !== req.user.userId) return res.status(403).json({ error: 'forbidden' });
+    const { albumId, score, comment } = req.body;
+    const album = await prisma.album.findUnique({ where: { id: Number(albumId) } });
+    if (!album) return res.status(404).json({ error: 'albumId not found' });
+    const updated = await prisma.rating.update({ where: { id }, data: { albumId: Number(albumId), score: Number(score), comment: comment ?? null } });
+    res.json(updated);
+  } catch (err) {
+    console.error('update rating error', err);
+    res.status(500).json({ error: 'internal error' });
+  }
 });
 
 // DELETE /api/ratings/:id - delete rating
-app.delete('/api/ratings/:id', (req, res) => {
+app.delete('/api/ratings/:id', authenticate, async (req, res) => {
   const id = Number(req.params.id);
-  const before = ratings.length;
-  ratings = ratings.filter(r => r.id !== id);
-  if (ratings.length === before) return res.status(404).json({ error: 'not found' });
-  res.status(204).end();
+  try {
+    const existing = await prisma.rating.findUnique({ where: { id } });
+    if (!existing) return res.status(404).json({ error: 'not found' });
+    if (existing.userId !== req.user.userId) return res.status(403).json({ error: 'forbidden' });
+    await prisma.rating.delete({ where: { id } });
+    res.status(204).end();
+  } catch (err) {
+    console.error('delete rating error', err);
+    res.status(500).json({ error: 'internal error' });
+  }
 });
 
 // bind to all interfaces to avoid IPv6/IPv4 resolution issues on some systems
+// mount auth routes
+const auth = require('./auth');
+app.use('/api/auth', auth);
+
 app.listen(port, '0.0.0.0', () => console.log(`Album backend listening on port ${port}`));

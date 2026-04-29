@@ -2,7 +2,8 @@ import Link from 'next/link'
 import Stars from './components/Stars'
 
 async function fetchAlbums() {
-  const res = await fetch('http://127.0.0.1:3000/api/albums', { cache: 'no-store' })
+  const API = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001'
+  const res = await fetch(`${API}/api/albums`, { cache: 'no-store', credentials: 'include' })
   if (!res.ok) throw new Error('Failed to fetch')
   return res.json()
 }
