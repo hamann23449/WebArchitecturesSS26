@@ -118,3 +118,15 @@ On error: log to console and res.status(500).json({ error: 'internal server erro
 Typische Ressourcen die ich benötige sind: verschiedene Users (Nutzerkonten); Tasks (z.B Alben bewerten, Alben zur Bibliothek hinzufügen); Projects und Comments.
 
 Für die Struktur würde ich eher das Pragmatisches Nesting für mein Projekt verwenden, da ich gerne die AlbenCover, AlbumTitel, KünstlerName, MusikGenre, AlbumSongsListe mir aus einer API holen möchte und ich bei der Komplexität lieber mit Ordnern/Ebenen arbeiten.
+
+
+/////TEST////////
+
+Ebene	Was testen wir bei uns?	Tool
+Unit	z.B. Validierungsfunktion für Eingaben/ Login	Vitest
+Integration	z.B. POST /api/tasks legt wirklich DB-Eintrag an	Vitest
+E2E	z.B. Login-Flow, neuer Eintrag erstellen, Album bewerten, Album Info rauslesen	Cypress
+
+Die zwei Dinge die in meinem Projekt am meisten Schaden einrichten sind Fehler bei dem lesen der Daten aus der Datenbank und interne Server Probleme.(Server startet nicht oder bekommt Probleme)
+
+
