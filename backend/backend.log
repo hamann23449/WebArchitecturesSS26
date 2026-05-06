@@ -1,1 +1,21 @@
 Album backend listening on port 3000
+2026-05-06T09:11:36.143Z GET /api/albums
+fetch albums error PrismaClientKnownRequestError: 
+Invalid `prisma.album.findMany()` invocation in
+C:\Users\hamann23449\Documents\GitHub\WebArchitecturesSS26\WebArchitecturesSS26\backend\index.js:26:36
+
+  23 
+  24 app.get('/api/albums', async (req, res) => {
+  25   try {
+→ 26     const all = await prisma.album.findMany(
+The table `main.Album` does not exist in the current database.
+    at $n.handleRequestError (C:\Users\hamann23449\Documents\GitHub\WebArchitecturesSS26\WebArchitecturesSS26\backend\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (C:\Users\hamann23449\Documents\GitHub\WebArchitecturesSS26\WebArchitecturesSS26\backend\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\hamann23449\Documents\GitHub\WebArchitecturesSS26\WebArchitecturesSS26\backend\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\hamann23449\Documents\GitHub\WebArchitecturesSS26\WebArchitecturesSS26\backend\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async C:\Users\hamann23449\Documents\GitHub\WebArchitecturesSS26\WebArchitecturesSS26\backend\index.js:26:17 {
+  code: 'P2021',
+  clientVersion: '5.22.0',
+  meta: { modelName: 'Album', table: 'main.Album' }
+}
+2026-05-06T09:17:59.394Z GET /
