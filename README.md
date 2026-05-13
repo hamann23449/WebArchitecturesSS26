@@ -129,4 +129,16 @@ E2E	z.B. Login-Flow, neuer Eintrag erstellen, Album bewerten, Album Info rausles
 
 Die zwei Dinge die in meinem Projekt am meisten Schaden einrichten sind Fehler bei dem lesen der Daten aus der Datenbank und interne Server Probleme.(Server startet nicht oder bekommt Probleme)
 
+///////Beobachtung Website/////////
+
+
+Frage	                                                                                                       Eure Antwort
+Gibt es Daten in eurer App, die sich ändern können, während ein anderer Nutzer die Seite offen hat?	           Es könnte neue Bewertungen oder Alben von Freunden ergänzt werden 
+Müssen Änderungen sofort sichtbar sein – oder reicht ein Reload?	                                           Änderungen müssen nicht sofort sichtbar sein, Proirisierung liegt beim Nutzer erstmal selbst 
+Ist die Kommunikation einseitig (Server → Client) oder bidirektional (beide senden)?	                       Meine Applikation ist eher einseitig (Server → Client)
+Wie viele Clients könnten gleichzeitig verbunden sein?	                                             Wenn der Nutzer ein Konto besitzt worauf seine Änderungen gespeichert werden, können etliche weitere Nutzer die Seite verwenden
+Trefft danach eine begründete Technologieentscheidung:      
+
+Keine Echtzeit umbedingt nötig → Da die Informationen wie Titel, Playlist, Cover alle einseitig vom Server kommen und der Nutzer nur unter seinem Account bewerten und abspeichern kann. 
+
 
