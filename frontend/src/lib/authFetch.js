@@ -8,8 +8,9 @@ import { useRouter } from 'next/navigation';
  * we also export a wrapper hook to get router in components if needed.
  */
 export async function authFetch(url, options = {}) {
-  const API = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001';
-  const full = url.startsWith('http') ? url : `${API}${url.startsWith('/') ? '' : '/'}${url}`;
+  // Use relative API paths so the same code works in production (served from same origin)
+  // and in development we use Vite's proxy to forward /api to the backend on localhost:3000
+  const full = url.startsWith('http') ? url : `${url.startsWith('/') ? '' : '/'}${url}`;
   const opts = { credentials: 'include', ...options };
 
   const res = await fetch(full, opts);

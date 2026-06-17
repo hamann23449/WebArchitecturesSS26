@@ -2,10 +2,13 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
+const path = require('path');
 
 dotenv.config();
 
 const app = express();
+// If running behind a reverse proxy (Hetzner/Apache), trust the proxy so HTTPS and client IPs are correct
+app.set('trust proxy', 1);
 app.use(cors({ origin: process.env.FRONTEND_ORIGIN || true, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
@@ -87,8 +90,9 @@ app.delete('/api/albums/:id', authenticate, async (req, res) => {
   }
 });
 
-// --- Configuration: use port 3001 for this tasks/albums API ---
-const port = process.env.PORT || 3001;
+// --- Configuration: read port from environment with a sensible fallback ---
+// In production the host may assign a port via process.env.PORT; fall back to 3000 for local dev.
+const port = process.env.PORT || 3000;
 
 // Helper: validate an album payload (used for POST / PUT)
 function validateAlbumPayload(payload) {
@@ -240,5 +244,27 @@ app.delete('/api/ratings/:id', authenticate, async (req, res) => {
 // mount auth routes
 const auth = require('./auth');
 app.use('/api/auth', auth);
+
+// --- Unknown /api paths should return JSON 404 (avoid serving index.html for API requests) ---
+app.use('/api', (req, res) => res.status(404).json({ error: 'Not found' }));
+
+// --- Serve static assets from the frontend build (assumed copied to backend/public) ---
+const distPath = path.join(__dirname, 'public');
+app.use(
+  express.static(distPath, {
+    setHeaders: (res, filePath) => {
+      // Example: long cache for hashed assets in assets/ folder
+      if (filePath.includes(`${path.sep}assets${path.sep}`)) {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      }
+    },
+  })
+);
+
+// --- SPA Fallback: all other requests -> index.html (never cached) ---
+app.get('*', (req, res) => {
+  res.setHeader('Cache-Control', 'no-cache');
+  res.sendFile(path.join(distPath, 'index.html'));
+});
 
 app.listen(port, '0.0.0.0', () => console.log(`Album backend listening on port ${port}`));

@@ -142,3 +142,16 @@ Trefft danach eine begründete Technologieentscheidung:
 Keine Echtzeit umbedingt nötig → Da die Informationen wie Titel, Playlist, Cover alle einseitig vom Server kommen und der Nutzer nur unter seinem Account bewerten und abspeichern kann. 
 
 
+
+
+////// Hetzner Architkekur Struktur ///////
+
+
+
+Bestandteil	        Läuft als	        Hostname (Beispiel)	           Wird ausgeliefert von
+Frontend (React)	statisches Build	RecordShelf.de	               Apache + .htaccess
+Backend (Express)	Node.js-App	        api.RecordShelf.de	           konsoleH Node.js
+Datenbank (SQL)	    MySQL/MariaDB	    localhost (auf dem Server)	   konsoleH DB-Verwaltung
+
+
+

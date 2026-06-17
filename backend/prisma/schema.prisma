@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  // Production: use MySQL and read the connection from the environment
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 // Prisma schema for Album Ratings app
