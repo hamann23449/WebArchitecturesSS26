@@ -3,9 +3,9 @@ generator client {
 }
 
 datasource db {
-  // Production: use MySQL and read the connection from the environment
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  // Local development: use SQLite database file `dev.db`
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 // Prisma schema for Album Ratings app
@@ -38,6 +38,8 @@ model Album {
   artistId     Int
   genre        Genre?   @relation(fields: [genreId], references: [id])
   genreId      Int?
+  // optional JSON tracklist stored as stringified JSON for SQLite
+  tracklist    String?
   release_year Int?
   ratings      Rating[]
 }

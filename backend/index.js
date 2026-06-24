@@ -34,6 +34,29 @@ app.get('/api/albums', async (req, res) => {
   }
 });
 
+// GET /api/albums/random - return N random albums with artist and genre included
+app.get('/api/albums/random', async (req, res) => {
+  const count = Math.min(Number(req.query.count) || 6, 50);
+  try {
+    const ids = await prisma.album.findMany({ select: { id: true } });
+    if (!ids || ids.length === 0) return res.json([]);
+    const idList = ids.map(i => i.id);
+    // simple shuffle and pick first N (fine for small datasets)
+    const shuffled = idList.sort(() => Math.random() - 0.5).slice(0, count);
+    const albums = await prisma.album.findMany({
+      where: { id: { in: shuffled } },
+      include: { artist: true, genre: true }
+    });
+    // preserve the shuffled order
+    const albumMap = new Map(albums.map(a => [a.id, a]));
+    const ordered = shuffled.map(id => albumMap.get(id)).filter(Boolean);
+    res.json(ordered);
+  } catch (err) {
+    console.error('fetch random albums error', err);
+    res.status(500).json({ error: 'internal error' });
+  }
+});
+
 // return a single album by id
 app.get('/api/albums/:id', authenticate, async (req, res) => {
   const id = Number(req.params.id);

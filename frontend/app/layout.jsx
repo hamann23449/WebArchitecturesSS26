@@ -12,14 +12,17 @@ export default function RootLayout({ children }) {
           <div className="flex items-center space-x-4">
             <img src="/assets/image/logo.png" alt="Logo" className="header-logo" />
             <div>
-              <div className="text-lg font-semibold brand">Album Ratings</div>
-              <div className="text-xs muted">Your personal music library</div>
+              <div className="text-lg font-semibold brand">Meine Alben</div>
+              <div className="text-xs muted">Persönliche Musikbibliothek — Alben bewerten und verwalten</div>
             </div>
           </div>
-          <nav className="text-sm muted space-x-4">
-            <a href="#" className="hover:underline">Dashboard</a>
-            <a href="#" className="hover:underline">Library</a>
-            <a href="#" className="hover:underline">Friends</a>
+          <nav className="text-sm muted space-x-4 flex items-center">
+            <a href="/" className="hover:underline">Start</a>
+            <a href="/library" className="hover:underline">Meine Bibliothek</a>
+            <a href="/artists" className="hover:underline">Künstler</a>
+            <a href="/albums" className="hover:underline">Alben</a>
+            <a href="/profile" className="hover:underline">Mein Profil</a>
+            <a href="/login" className="ml-4 px-3 py-1 rounded border border-transparent hover:border-gray-300">Anmelden</a>
           </nav>
         </header>
 
